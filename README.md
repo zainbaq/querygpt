@@ -26,6 +26,10 @@ bash build.sh
 source querygpt/bin/activate # if not already activated
 python app/bot.py -e <engine> -f <path/to/config/file> -m <openai model>
 ```
+-e --engine : 'sqlite3' or 'mysql'
+-f --file   : path to config file
+-m --model  : defines the OpenAI model to use 'gpt-3.5-turbo' or 'gpt-4'
+
 The config files contain relevant information on the database you want to connect to.
 
 ## SQLite3
