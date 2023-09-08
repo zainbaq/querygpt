@@ -21,7 +21,7 @@ The config files contain relevant information on the database you want to connec
 For SQLite3, this simply points to the .db file.
 
 ## MySQL
-For MySQL, create a JSON file in ```database/engine/table_name.json and have it contain the following lines.
+For MySQL, create a JSON file in `database/mysql/<table_name>.json` and have it contain the following lines.
 ```
 {
   "host": endpoint to your DB instance,
