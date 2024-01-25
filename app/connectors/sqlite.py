@@ -47,4 +47,39 @@ class SQLiteDBConnector():
                 json.dump(table_dict, f, indent=1)
         else:
             return table_dict
+
+    def execute_query(self, query: str):
+        """
+        Execute a query on an SQLite database.
+
+        Parameters:
+        - database_path (str): The path to the SQLite database file.
+        - query (str): The SQL query to execute.
+
+        Returns:
+        - result: The result of the query execution (may vary based on the query type).
+        """
+        # Connect to the database
+        database_path = self.db_path
+        connection = sqlite3.connect(database_path)
+
+        try:
+            # Create a cursor object to execute queries
+            cursor = connection.cursor()
+
+            # Execute the query
+            cursor.execute(query)
+
+            # Commit the changes to the database (for write operations)
+            connection.commit()
+
+            # Fetch the result (for read operations)
+            result = cursor.fetchall()
+
+            return result
+
+        finally:
+            # Close the connection
+            connection.close()
+
     
