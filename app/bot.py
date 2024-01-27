@@ -27,7 +27,7 @@ def get_connector_from_engine(engine, **kwargs):
     return db_parser
 
 # This method provides a sliding window approach so as not to provide too many tokens to the LLM
-def get_inputs_from_conversation(messages, buffer=2):
+def get_inputs_from_conversation(messages, buffer=2) -> list:
     if buffer > len(messages):
         return [messages[-1]]
     else: return messages[-buffer:]
@@ -48,6 +48,8 @@ def contains_action_keyword(input_string: str) -> bool:
 
 # Function to initiate a conversation with the LLM. Conversations are retained by storing each message
 # in a list and exposing the last `buffer` messages to the LLM (for token efficiency)
+#
+# Also includes an option to run the query in the database to retrieve the data
 def converse(args, schema_string: str, connector=None, buffer: int=2):
 
     # Provide instructions to the LLM as a system message
@@ -56,10 +58,13 @@ def converse(args, schema_string: str, connector=None, buffer: int=2):
     # Create a list to store the conversation history and add the system message to it
     messages = [system_message] 
 
+    # Start conversation loop
     while True:
         
         # Get prompt as an input from the user
         question = input('>> ')
+
+        # Break conversation when 'exit' or 'quit' is input by the user
         if question.lower() == 'exit' or question.lower() == 'quit':
             break
         
@@ -84,8 +89,12 @@ def converse(args, schema_string: str, connector=None, buffer: int=2):
         if contains_action_keyword(question):
             run_query = input("Run this query? (yes|no) >> ")
             if run_query.lower() == 'yes':
-                output = connector.execute_query(answer)
-                print(pd.DataFrame(output))
+                try:
+                    output = connector.execute_query(answer)
+                    print(pd.DataFrame(output))
+                except Exception as e:
+                    print("It seems like there is an issue with this query. Please verify the query.")
+                    print(e)
 
 def main():
     args = parse_args()

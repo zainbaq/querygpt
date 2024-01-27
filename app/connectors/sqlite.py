@@ -4,9 +4,22 @@ import json
 class SQLiteDBConnector():
 
     def __init__(self, db_path):
+        """
+        Initializes the connector
+
+        Parameters:
+        db_path : path to local SQLite3 database file
+        """
         self.db_path = db_path
 
     def get_table_names(self):
+        """
+        Gets the names of all tables in the database using the query:
+        SELECT name FROM sqlite_master WHERE type='table';
+
+        Returns:
+        table_names : a list of strings containing the names of all tables in the database
+        """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
@@ -21,12 +34,25 @@ class SQLiteDBConnector():
         return table_names
     
     def process_schema(self, schema):
+        """
+        Converts the schema for a given table into a parseable string to be passed on to the LLM
+        """
         columns = []
         for i, column in enumerate(schema):
             columns.append({'column_number': i, 'column_name': column[1], 'data_type': column[2]})
         return columns
 
     def get_schemas(self, table_names=None, output=None):
+        """
+        Gets the schemas of all tables in the databases or in the `table_names` parameter
+
+        Parameters:
+        `table_names` : names of tables to get schemas for. If None, then all tables will be searched
+        `output` : output path to save schemas JSON to
+
+        Returns:
+        table_dict : a dictionary containing the schemas for each table
+        """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
